@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>div</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .canvas_wrap {
+            padding: 10px;
+            border: 1px solid #eee;
+            position: relative;
+            width: 190px;
+            height: 190px;
+            margin: 50px auto;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas_wrap">
+    </div>
+    <!--    <script src="js/dragDiv.js"></script>-->
+    <script>
+        var i, n = 10;
+        var divWrap = document.querySelector(".canvas_wrap")
+        for (i = 0; i < 9; i++) {
+            var cDiv = document.createElement("div");
+            cDiv._index = cDiv.innerHTML = i;
+            cDiv.style.cssText = "width:50px;height:50px;background:#666;position:absolute;box-sizing:border-box;cursor: move;color:#fff;"
+            cDiv.style.left = parseInt(i % 3) * 60 + 10 + "px";
+            cDiv.style.top = parseInt(i / 3, 10) * 60 + 10 + "px";
+            divWrap.appendChild(cDiv);
+            cDiv.onmousedown = function (e) {
+                var _this = this;
+                this.style.zIndex = ++n;
+                var xPos = e.clientX - this.offsetLeft;
+                var yPos = e.clientY - this.offsetTop;
+                document.onmousemove = function (e) {
+                    move(e);
+                    e.preventDefault;
+                };
+                document.onmouseup = function () {
+                    mouseup();
+                };
+                function move(e) {
+                    var curLeft = e.clientX - xPos,
+                        curTop = e.clientY - yPos;
+                    var j;
+                    if (curLeft >= 0 && curLeft <= 140) {
+                        _this.style.left = curLeft + "px";
+                    }
+                    if (curTop >= 0 && curTop <= 140) {
+                        _this.style.top = curTop + "px"
+                    };
+                    distanceArr(_this);
+                };
+                function mouseup() {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                    var divs = document.querySelector(".canvas_wrap").querySelectorAll("div");
+                    var map = Array.prototype.map;
+                    map.call(divs, function (item) {
+                        item.style.left = parseInt((item._index) % 3) * 60 + 10 + "px";
+                        item.style.top = parseInt((item._index) / 3, 10) * 60 + 10 + "px";
+                    })
+                };
+                return false;
+            }
+        }
+        function distanceArr(obj) {
+            var distaceArr = [],
+                j;
+            var map = Array.prototype.map;
+            var divs = document.querySelector(".canvas_wrap").querySelectorAll("div");
+            distaceArr = map.call(divs, function (item) {
+                var tempFlag = 0;
+                if (item != obj) {
+                    if (getDistance(item, obj) < 30) {
+                        item.style.background = "red";
+                        tempFlag = obj._index;
+                        obj._index = item._index;
+                        item._index = tempFlag;
+                        item.style.left = parseInt((item._index) % 3) * 60 + 10 + "px";
+                        item.style.top = parseInt((item._index) / 3, 10) * 60 + 10 + "px";
+                        //                        item.style.transition="all 0.3s ease";
+                    } else {
+                        item.style.background = "#666";
+                    }
+                }
+            });
+            return distaceArr;
+        }
+        function getDistance(o1, o2) {
+            var x1 = o1.offsetLeft,
+                y1 = o1.offsetTop,
+                x2 = o2.offsetLeft,
+                y2 = o2.offsetTop;
+            return Math.floor(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
+        }
+    </script>
+</body>
+</html>
