@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>drag html</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box1 {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background: #eee;
+        }
+
+        .box2 {
+            height: 500px;
+        }
+
+        .box3 {
+            background: #aaa;
+            height: 200px;
+        }
+        .s1{
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="box1" id="div1" draggable="true"></div>
+    </div>
+
+    <div class="box2" id="div2"></div>
+    <div class="box3" id="div3">
+        <div class="s1" id="s1">
+
+        </div>
+    </div>
+
+    <script>
+        let parentNode=''
+        var oringEle = document.getElementById('div1')
+        var eleTarget = document.getElementById('div3')
+        oringEle.ondragstart = function handleDragStart(ev) {
+            console.log('start', ev)
+            ev.dataTransfer.dropEffect = "copy";
+            ev.dataTransfer.setData('id', ev.target.id)
+            ev.dataTransfer.setData('text/html', '<p>嘿哈</p>')
+            var img = new Image()
+            img.src = '../../../test/aa.png'
+            ev.dataTransfer.setDragImage(img, 10, 10)
+            parentNode=ev.target.parentNode
+        }
+        oringEle.ondrag = function (ev) {
+            let x = ev.target.pageX
+            let y = ev.target.pageY
+            if (x == 0 && y == 0) {
+                return
+            }
+            console.log('drag')
+        }
+        oringEle.ondragend = function (ev) {
+            console.log('end')
+        }
+        eleTarget.ondragover = function handleDropOver(ev) {
+            ev.dataTransfer.dropEffect = "move"
+            console.log('over')
+            ev.preventDefault()
+        }
+        eleTarget.ondrop = function handleDrop(ev) {
+            ev.preventDefault()
+            const data = ev.dataTransfer.getData('id')
+            var ele = document.getElementById(data)
+            var html = ev.dataTransfer.getData('text/html')
+            ele.innerHTML = html
+            ev.target.appendChild(document.getElementById(data))
+            
+            parentNode.appendChild(document.getElementById('s1'))
+        }
+        eleTarget.ondragleave = function handleDrop(ev) {
+            console.log('leave')
+        }
+
+    </script>
+
+</body>
+
+</html>
