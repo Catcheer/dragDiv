@@ -1,0 +1,89 @@
+<!--
+ * @Description: 
+ * @Author: zhangchuangye
+ * @Date: 2020-04-24 09:06:26
+ throttle
+ -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>debounce</title>
+</head>
+
+<body>
+    <h4>debounce 一定时间内再次触发时,清除掉当前的timer,重新设定定时器</h4>
+    <input id="myInput" />  
+    <div>输入的内容
+        <span class="result"></span>
+    </div>
+    
+
+    <h4 style="margin-top:30px">throttle 用一个锁变量实现一定时间内只执行一次回调函数,回调函数执行后打开锁</h4>
+    <div id="myBox" style="height: 300px;width: 300px; overflow: scroll;border:1px solid #ddd">
+        <div style="height:2000px"></div>
+    </div>
+
+    <div>滚动距离
+        <span class="scrollRes"></span>
+    </div>
+
+    <script>
+        const myInp = document.querySelector('#myInput')
+        const myBox=document.querySelector('#myBox')
+        const result=document.querySelector('.result')
+        const scrollRes=document.querySelector('.scrollRes')
+        function debounce(fn, delay) {
+            console.log('delay',delay)
+            let timer = null
+            return function (...args) {
+                if (timer) {
+                    clearTimeout(timer)
+                   
+                }
+                timer = setTimeout(() => {
+                    console.log(this)
+                    fn.apply(this,args)
+                }, delay)
+            }
+        }
+
+        function throttle(fn, delay) {     
+            let flag = false
+            return function (...args) {
+                if (flag) {
+                    return     
+                }
+                flag=true
+                let  timer = setTimeout(() => {
+                    console.log(this)
+                    fn.apply(this,args)
+                    flag = false
+                    clearTimeout(timer)
+                }, delay)
+            }
+        }
+
+
+
+        myInp.oninput = debounce(function (e) {
+            console.log(e.target.value)
+            result.innerHTML=e.target.value
+        },2000
+        )
+
+        myBox.onscroll=throttle(function(e){
+            console.log(e.target.scrollTop)
+            scrollRes.innerHTML=e.target.scrollTop
+        },2000)
+     
+
+    </script>
+
+</body>
+
+</html>
